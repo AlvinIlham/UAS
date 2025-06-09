@@ -270,85 +270,108 @@ body {
   border: 1px solid var(--border-color);
 }
 
-/* Tables */
-.table-responsive {
+/* Table Styles */
+.table-container {
   overflow-x: auto;
+  margin-top: 1rem;
   background: var(--bg-secondary);
   border-radius: var(--border-radius);
-  margin-top: 1rem;
+  border: 1px solid var(--border-color);
 }
 
 .data-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  color: var(--white);
 }
 
 .data-table th {
   background: var(--bg-elevated);
-  color: var(--gold);
+  color: var(--primary);
   font-weight: 600;
   padding: 1rem;
   text-align: left;
   border-bottom: 2px solid var(--border-color);
 }
 
+.data-table th.text-center {
+  text-align: center;
+}
+
 .data-table td {
   padding: 1rem;
-  border-bottom: 1px solid var(--border-color);
   color: var(--text-white);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.data-table tbody tr:hover {
+  background: var(--bg-elevated);
+}
+
+.data-table .actions {
+  text-align: center;
+}
+
+/* Card Title */
+.action-bar h2 {
+  color: var(--text-white);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
 }
 
 /* Action Buttons */
 .action-bar {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1.5rem;
   gap: 1rem;
 }
 
 .btn-add {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.25rem;
-  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  background: var(--primary);
   color: var(--black);
   border: none;
   border-radius: var(--border-radius);
   font-weight: 600;
-  cursor: pointer;
   text-decoration: none;
   transition: all 0.3s ease;
 }
 
 .btn-add:hover {
+  background: var(--primary-light);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+}
+
+.btn-add .material-icons {
+  font-size: 1.25rem;
 }
 
 .actions {
   display: flex;
   gap: 0.5rem;
-  justify-content: flex-end;
 }
 
 .btn-action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: var(--border-radius);
   border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   background: var(--bg-elevated);
 }
 
 .btn-edit {
-  color: var(--gold);
+  color: var(--primary);
 }
 
 .btn-edit:hover {
@@ -1108,10 +1131,7 @@ body {
   justify-content: center;
   align-items: center;
   z-index: 1000;
-}
-
-.modal.show {
-  display: flex;
+  padding: 1rem;
 }
 
 .modal-content {
@@ -1135,54 +1155,68 @@ body {
   }
 }
 
-/* Form Styles */
-.input-group {
-  margin-bottom: 1.5rem;
+/* Button Improvements */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: transparent;
 }
 
-.input-group label {
-  display: block;
-  color: var(--text-white);
-  margin-bottom: 0.5rem;
-  font-weight: 500;
+.btn-danger {
+  color: var(--error);
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
-.input-field {
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+}
+
+.text-danger {
+  color: var(--error);
+}
+
+/* Form Improvements */
+.auth-form .input-field {
   position: relative;
   display: flex;
   align-items: center;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  overflow: hidden;
+  padding: 0.25rem;
 }
 
-.input-field .material-icons {
-  padding: 0.75rem;
+.auth-form .input-field i {
+  margin: 0 0.75rem;
   color: var(--text-secondary);
 }
 
-.input-field input {
+.auth-form .input-field input {
   flex: 1;
   padding: 0.75rem;
   background: transparent;
   border: none;
   color: var(--text-white);
-  font-size: 1rem;
+  font-size: 0.935rem;
 }
 
-.input-field input:focus {
+.auth-form .input-field input:focus {
   outline: none;
 }
 
-.toggle-password {
-  cursor: pointer;
-  padding: 0.75rem;
-  color: var(--text-secondary);
-}
-
-.toggle-password:hover {
-  color: var(--gold);
+.auth-form .input-field:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.1);
 }
 
 .form-actions {
@@ -1190,42 +1224,4 @@ body {
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 2rem;
-}
-
-/* Button Styles */
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-  color: var(--black);
-  border: none;
-  border-radius: var(--border-radius);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
-}
-
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: var(--bg-elevated);
-  color: var(--text-white);
-  border: none;
-  border-radius: var(--border-radius);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-secondary:hover {
-  background: var(--medium-gray);
 }

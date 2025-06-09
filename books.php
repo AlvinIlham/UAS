@@ -131,6 +131,7 @@ $offset = ($current_page - 1) * $books_per_page;
             <div class="card-glass">
                 <?php if ($role === 'admin'): ?>
                     <div class="action-bar">
+                        <h2>Daftar Buku</h2>
                         <a href="books_add.php" class="btn-add">
                             <span class="material-icons">add</span>
                             Tambah Buku
@@ -149,7 +150,7 @@ $offset = ($current_page - 1) * $books_per_page;
                                 <th>Kategori</th>
                                 <th>Stok</th>
                                 <?php if ($role === 'admin'): ?>
-                                    <th>Aksi</th>
+                                    <th class="text-center">Aksi</th>
                                 <?php endif; ?>
                             </tr>
                         </thead>
