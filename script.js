@@ -225,9 +225,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  // Password Toggle Function
   function togglePassword(inputId) {
     const input = document.getElementById(inputId);
-    const icon = input.nextElementSibling;
+    const icon = input.parentElement.querySelector(".toggle-password");
 
     if (input.type === "password") {
       input.type = "text";

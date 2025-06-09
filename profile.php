@@ -147,14 +147,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
                     <div class="profile-header">
                         <div class="profile-avatar">
                             <span><?php echo strtoupper(substr($user['username'], 0, 1)); ?></span>
-                        </div>
-                        <div class="profile-info">
+                        </div>                        <div class="profile-info">
                             <h2><?php echo htmlspecialchars($user['username']); ?></h2>
                             <p class="role-badge"><?php echo ucfirst($user['role']); ?></p>
                         </div>
-                        <button class="btn-primary" onclick="openProfileModal()">
+                        <button type="button" class="btn-primary" onclick="openProfileModal()">
                             <span class="material-icons">edit</span>
-                            Edit Profil
+                            <span>Edit Profil</span>
                         </button>
                     </div>
                 </div>
