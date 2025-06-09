@@ -25,6 +25,60 @@ $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $borrows = $stmt->get_result();
+
+// Profile update logic
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
+    $username = trim($_POST['username']);
+    $current_password = $_POST['current_password'];
+    $new_password = $_POST['new_password'];
+    $confirm_password = $_POST['confirm_password'];
+
+    // Validate current password
+    $stmt = $conn->prepare("SELECT password FROM users WHERE id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user_data = $result->fetch_assoc();
+
+    if (!password_verify($current_password, $user_data['password'])) {
+        header("Location: profile.php?error=Password saat ini tidak sesuai");
+        exit;
+    }
+
+    // Check if username is taken
+    if ($username !== $user['username']) {
+        $stmt = $conn->prepare("SELECT id FROM users WHERE username = ? AND id != ?");
+        $stmt->bind_param("si", $username, $user_id);
+        $stmt->execute();
+        if ($stmt->get_result()->num_rows > 0) {
+            header("Location: profile.php?error=Username sudah digunakan");
+            exit;
+        }
+    }
+
+    // Update user data
+    if (!empty($new_password)) {
+        if ($new_password !== $confirm_password) {
+            header("Location: profile.php?error=Password baru tidak cocok dengan konfirmasi");
+            exit;
+        }
+        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+        $stmt = $conn->prepare("UPDATE users SET username = ?, password = ? WHERE id = ?");
+        $stmt->bind_param("ssi", $username, $hashed_password, $user_id);
+    } else {
+        $stmt = $conn->prepare("UPDATE users SET username = ? WHERE id = ?");
+        $stmt->bind_param("si", $username, $user_id);
+    }
+
+    if ($stmt->execute()) {
+        $_SESSION['username'] = $username;
+        header("Location: profile.php?success=Profil berhasil diperbarui");
+        exit;
+    } else {
+        header("Location: profile.php?error=Gagal memperbarui profil");
+        exit;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -33,88 +87,175 @@ $borrows = $stmt->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil | Perpustakaan Mini</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body class="dashboard-bg-alt">
     <div class="dashboard-grid">
         <aside class="dashboard-side">
-            <a href="dashboard.php" class="dashboard-logout-alt" style="margin-bottom: 24px">← Dashboard</a>
-            <a href="logout.php" class="dashboard-logout-alt">Logout</a>
+            <div class="avatar">
+                <span><?php echo strtoupper(substr($user['username'], 0, 1)); ?></span>
+            </div>
+            <p class="admin-text"><?php echo htmlspecialchars($user['username']); ?></p>
+            <p class="role-text"><?php echo ucfirst($user['role']); ?></p>
+            
+            <nav class="dashboard-menu">
+                <a href="dashboard.php">
+                    <span>⬜</span> Dashboard
+                </a>
+                <a href="books.php">
+                    <span>📚</span> Data Buku
+                </a>
+                <a href="borrow.php">
+                    <span>📥</span> Peminjaman
+                </a>
+                <a href="return.php">
+                    <span>📤</span> Pengembalian
+                </a>
+                <?php if ($_SESSION['role'] === 'admin'): ?>
+                <a href="members.php">
+                    <span>👥</span> Data Anggota
+                </a>
+                <?php endif; ?>
+                <a href="profile.php" class="active">
+                    <span>👤</span> Profil
+                </a>
+                <a href="logout.php">
+                    <span>🚪</span> Logout
+                </a>
+            </nav>
         </aside>
+
         <main class="dashboard-main">
-            <h1 class="dashboard-title-alt">Profil Saya</h1>
+            <h1 class="dashboard-title">Profil Saya</h1>
 
             <?php if (isset($_GET['success'])): ?>
             <div class="alert alert-success">
+                <span>✅</span>
                 <?php echo htmlspecialchars($_GET['success']); ?>
             </div>
             <?php endif; ?>
 
             <?php if (isset($_GET['error'])): ?>
             <div class="alert alert-error">
+                <span>❌</span>
                 <?php echo htmlspecialchars($_GET['error']); ?>
             </div>
             <?php endif; ?>
 
-            <div class="profile-container">
-                <div class="profile-info">                    
-                    <div class="profile-details">
-                        <h2><?php echo htmlspecialchars($user['username']); ?></h2>
-                        <p>Role: <?php echo ucfirst($user['role']); ?></p>
-                        
-                        <button class="btn-primary" onclick="openProfileModal()">Edit Profil</button>
+            <div class="content-grid">
+                <div class="card-glass">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <span><?php echo strtoupper(substr($user['username'], 0, 1)); ?></span>
+                        </div>
+                        <div class="profile-info">
+                            <h2><?php echo htmlspecialchars($user['username']); ?></h2>
+                            <p class="role-badge"><?php echo ucfirst($user['role']); ?></p>
+                        </div>
+                        <button class="btn-primary" onclick="openProfileModal()">
+                            <span class="material-icons">edit</span>
+                            Edit Profil
+                        </button>
                     </div>
                 </div>
 
-                <div class="borrow-history">
-                    <h3>Riwayat Peminjaman Terakhir</h3>
-                    <table class="books-table">
-                        <thead>
-                            <tr>
-                                <th>Judul Buku</th>
-                                <th>Tanggal Pinjam</th>
-                                <th>Tanggal Kembali</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php if ($borrows->num_rows > 0): ?>
-                            <?php while ($borrow = $borrows->fetch_assoc()): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($borrow['judul']); ?></td>
-                                <td><?php echo date('d/m/Y', strtotime($borrow['tanggal_pinjam'])); ?></td>
-                                <td><?php echo date('d/m/Y', strtotime($borrow['tanggal_kembali'])); ?></td>
-                                <td><?php echo ucfirst($borrow['status']); ?></td>
-                            </tr>
-                            <?php endwhile; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="4" style="text-align: center; color: #b2b8c6">
-                                    Belum ada riwayat peminjaman.
-                                </td>
-                            </tr>
-                        <?php endif; ?>
-                        </tbody>
-                    </table>
+                <div class="card-glass">
+                    <h2 class="section-title">Riwayat Peminjaman Terakhir</h2>
+                    <div class="table-responsive">
+                        <table class="books-table">
+                            <thead>
+                                <tr>
+                                    <th>Judul Buku</th>
+                                    <th>Tanggal Pinjam</th>
+                                    <th>Tanggal Kembali</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php if ($borrows->num_rows > 0): ?>
+                                <?php while ($borrow = $borrows->fetch_assoc()): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($borrow['judul']); ?></td>
+                                    <td><?php echo date('d/m/Y', strtotime($borrow['tanggal_pinjam'])); ?></td>
+                                    <td><?php echo date('d/m/Y', strtotime($borrow['tanggal_kembali'])); ?></td>
+                                    <td>
+                                        <span class="status-badge <?php echo strtolower($borrow['status']); ?>">
+                                            <?php echo ucfirst($borrow['status']); ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="4" class="text-center">
+                                        Belum ada riwayat peminjaman.
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Modal Edit Profile -->
-    <div id="profileModal" class="modal-profile" style="display: none">
-        <div class="modal-content-profile">
-            <span class="close-profile" onclick="closeProfileModal()">&times;</span>
-            <h2>Edit Profile</h2>
-            <form action="profile_update.php" method="POST" class="edit-form">
+    <!-- Edit Profile Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <div class="auth-header">
+                <i class="material-icons auth-icon">account_circle</i>
+                <h2>Edit Profil</h2>
+                <p class="auth-subtitle">Perbarui informasi profil Anda</p>
+            </div>
+            <form action="profile.php" method="POST" class="auth-form">
                 <div class="input-group">
-                    <label for="editName">Username</label>
-                    <input type="text" id="editName" name="editName" 
-                           value="<?php echo htmlspecialchars($user['username']); ?>" required>
+                    <label for="username">Username</label>
+                    <div class="input-field">
+                        <i class="material-icons">person</i>
+                        <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" required maxlength="50">
+                    </div>
                 </div>
+                
                 <div class="input-group">
-                    <label for="newPassword">Password Baru (opsional)</label>
-                    <input type="password" id="newPassword" name="newPassword" minlength="6">
-                </div>                <button type="submit" class="btn-primary">Simpan Perubahan</button>
+                    <label for="current_password">Password Saat Ini</label>
+                    <div class="input-field">
+                        <i class="material-icons">lock</i>
+                        <input type="password" id="current_password" name="current_password" required>
+                        <i class="material-icons toggle-password" onclick="togglePassword('current_password')">visibility_off</i>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="new_password">Password Baru</label>
+                    <div class="input-field">
+                        <i class="material-icons">vpn_key</i>
+                        <input type="password" id="new_password" name="new_password" minlength="6" 
+                               placeholder="Kosongkan jika tidak ingin mengubah">
+                        <i class="material-icons toggle-password" onclick="togglePassword('new_password')">visibility_off</i>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="confirm_password">Konfirmasi Password Baru</label>
+                    <div class="input-field">
+                        <i class="material-icons">vpn_key</i>
+                        <input type="password" id="confirm_password" name="confirm_password" minlength="6"
+                               placeholder="Kosongkan jika tidak ingin mengubah">
+                        <i class="material-icons toggle-password" onclick="togglePassword('confirm_password')">visibility_off</i>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeProfileModal()">
+                        <i class="material-icons">close</i>
+                        <span>Batal</span>
+                    </button>
+                    <button type="submit" name="update_profile" class="btn-primary">
+                        <i class="material-icons">save</i>
+                        <span>Simpan Perubahan</span>
+                    </button>
+                </div>
             </form>
         </div>
     </div>

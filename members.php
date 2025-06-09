@@ -33,118 +33,143 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Anggota | Perpustakaan Mini</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body class="dashboard-bg-alt">
-    <button class="mobile-nav-toggle">
-      <span>☰</span>
-    </button>
     <div class="dashboard-grid">
         <aside class="dashboard-side">
-            <nav class="dashboard-menu-alt">
-                <a href="dashboard.php"><span>🏠</span>Dashboard</a>
-                <a href="profile.php"><span>👤</span>Profil Saya</a>
-                <a href="books.php"><span>📚</span>Data Buku</a>
-                <a href="borrow.php"><span>📥</span>Peminjaman</a>
-                <a href="return.php"><span>📤</span>Pengembalian</a>
-                <a href="members.php"><span>👥</span>Data Anggota</a>
-                <a href="logout.php" class="dashboard-logout-alt">Logout</a>
+            <div class="avatar">
+                <span><?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?></span>
+            </div>
+            <p class="admin-text"><?php echo htmlspecialchars($_SESSION['username']); ?></p>
+            <p class="role-text"><?php echo ucfirst($_SESSION['role']); ?></p>
+            
+            <nav class="dashboard-menu">
+                <a href="dashboard.php">
+                    <span>⬜</span> Dashboard
+                </a>
+                <a href="books.php">
+                    <span>📚</span> Data Buku
+                </a>
+                <a href="borrow.php">
+                    <span>📥</span> Peminjaman
+                </a>
+                <a href="return.php">
+                    <span>📤</span> Pengembalian
+                </a>
+                <a href="members.php" class="active">
+                    <span>👥</span> Data Anggota
+                </a>
+                <a href="profile.php">
+                    <span>👤</span> Profil
+                </a>
+                <a href="logout.php">
+                    <span>🚪</span> Logout
+                </a>
             </nav>
         </aside>
+
         <main class="dashboard-main">
-            <h1 class="dashboard-title-alt">Data Anggota</h1>
+            <h1 class="dashboard-title">Data Anggota</h1>
 
             <?php if (isset($_GET['status']) && isset($_GET['message'])): ?>
             <div class="alert alert-<?php echo $_GET['status'] === 'success' ? 'success' : 'error'; ?>">
-                <?php echo htmlspecialchars($_GET['message']); ?>
+                <i class="material-icons"><?php echo $_GET['status'] === 'success' ? 'check_circle' : 'error'; ?></i>
+                <span><?php echo htmlspecialchars($_GET['message']); ?></span>
             </div>
             <?php endif; ?>
 
-            <div class="table-container">
-                <div class="table-actions">
-                    <button onclick="showAddMemberForm()" class="btn-primary">+ Tambah Anggota</button>
-                </div>
+            <div class="table-actions">
+                <button onclick="showAddMemberForm()" class="btn-primary">
+                    <span>👥</span> Tambah Anggota
+                </button>
+            </div>
 
-                <!-- Add Member Form -->
-                <div id="addMemberForm" style="display: none; margin-bottom: 20px;">
-                    <form action="member_add.php" method="POST" class="form-container">
-                        <div class="form-group">
+            <div class="card-glass">
+                <div id="addMemberForm" class="form-popup" style="display: none;">
+                    <form action="member_add.php" method="POST" class="edit-form">
+                        <h3>Tambah Anggota Baru</h3>
+                        <div class="input-group">
                             <label for="username">Username</label>
-                            <input type="text" id="username" name="username" required>
+                            <div class="input-field">
+                                <span>👤</span>
+                                <input type="text" id="username" name="username" required maxlength="50">
+                            </div>
                         </div>
-                        <div class="form-group">
+                        <div class="input-group">
                             <label for="password">Password</label>
-                            <input type="password" id="password" name="password" required>
+                            <div class="input-field">
+                                <span>🔒</span>
+                                <input type="password" id="password" name="password" required minlength="6">
+                                <button type="button" class="toggle-password">👁️</button>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn-primary">Simpan</button>
-                            <button type="button" onclick="hideAddMemberForm()" class="btn-secondary">Batal</button>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">
+                                <span>💾</span> Simpan
+                            </button>
+                            <button type="button" onclick="hideAddMemberForm()" class="btn-secondary">
+                                <span>❌</span> Batal
+                            </button>
                         </div>
                     </form>
                 </div>
 
-                <table class="books-table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Username</th>
-                            <th>Role</th>
-                            
-                            <th>Total Peminjaman</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <?php
-                    $query = "SELECT u.*, 
-                             (SELECT COUNT(*) FROM borrows WHERE user_id = u.id) as total_pinjam 
-                             FROM users u 
-                             WHERE u.role != 'admin' 
-                             ORDER BY u.id DESC";
-                    $result = $conn->query($query);
-                    
-                    if ($result && $result->num_rows > 0):
-                        $no = 1;
-                        while ($row = $result->fetch_assoc()):
-                    ?>
-                        <tr>
-                            <td><?php echo $no++; ?></td>
-                            <td><?php echo htmlspecialchars($row['username']); ?></td>
-                            <td><?php echo ucfirst($row['role']); ?></td>
-                            
-                            <td><?php echo isset($row['total_pinjam']) ? $row['total_pinjam'] : '0'; ?></td>
-                            <td>
-                                <a href="members.php?action=delete&id=<?php echo $row['id']; ?>" 
-                                   class="btn-delete"
-                                   onclick="return confirm('Yakin hapus anggota ini?')">Hapus</a>
-                            </td>
-                        </tr>
-                    <?php 
-                        endwhile;
-                    else:
-                    ?>
-                        <tr>
-                            <td colspan="6" style="text-align: center; color: #b2b8c6">
-                                Belum ada data anggota.
-                            </td>
-                        </tr>
-                    <?php 
-                    endif;
-                    $conn->close();
-                    ?>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="books-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Total Peminjaman</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        $query = "SELECT u.*, 
+                                (SELECT COUNT(*) FROM borrows WHERE user_id = u.id) as total_borrows 
+                                FROM users u 
+                                WHERE u.role != 'admin' 
+                                ORDER BY u.id DESC";
+                        $result = $conn->query($query);
+                        
+                        if ($result && $result->num_rows > 0):
+                            while ($row = $result->fetch_assoc()):
+                        ?>
+                            <tr>
+                                <td><?php echo $row['id']; ?></td>
+                                <td><?php echo htmlspecialchars($row['username']); ?></td>
+                                <td><?php echo ucfirst(htmlspecialchars($row['role'])); ?></td>
+                                <td><?php echo $row['total_borrows']; ?></td>
+                                <td>
+                                    <a href="members.php?action=delete&id=<?php echo $row['id']; ?>" 
+                                       onclick="return confirm('Apakah Anda yakin ingin menghapus anggota ini?')"
+                                       class="btn-danger">
+                                        <span>🗑️</span>
+                                        <span>Hapus</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php 
+                            endwhile;
+                        else:
+                        ?>
+                            <tr>
+                                <td colspan="5" class="text-center">Tidak ada data anggota</td>
+                            </tr>
+                        <?php 
+                        endif;
+                        $conn->close();
+                        ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </main>
     </div>
 
-    <script>
-        function showAddMemberForm() {
-            document.getElementById('addMemberForm').style.display = 'block';
-        }
-        
-        function hideAddMemberForm() {
-            document.getElementById('addMemberForm').style.display = 'none';
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

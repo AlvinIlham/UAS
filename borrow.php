@@ -71,85 +71,140 @@ $borrows_result = $stmt->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Peminjaman Buku | Perpustakaan Mini</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body class="dashboard-bg-alt">
-    <div class="dashboard-grid">
+<body class="dashboard-bg-alt">    <div class="dashboard-grid">
         <aside class="dashboard-side">
-            <a href="dashboard.php" class="dashboard-logout-alt" style="margin-bottom: 24px">← Dashboard</a>
-            <a href="logout.php" class="dashboard-logout-alt">Logout</a>
+            <div class="avatar">
+                <span><?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?></span>
+            </div>
+            <p class="admin-text"><?php echo htmlspecialchars($_SESSION['username']); ?></p>
+            <p class="role-text"><?php echo ucfirst($_SESSION['role']); ?></p>
+            
+            <nav class="dashboard-menu">
+                <a href="dashboard.php">
+                    <span>⬜</span> Dashboard
+                </a>
+                <a href="books.php">
+                    <span>📚</span> Data Buku
+                </a>
+                <a href="borrow.php" class="active">
+                    <span>📥</span> Peminjaman
+                </a>
+                <a href="return.php">
+                    <span>📤</span> Pengembalian
+                </a>
+                <?php if ($_SESSION['role'] === 'admin'): ?>
+                <a href="members.php">
+                    <span>👥</span> Data Anggota
+                </a>
+                <?php endif; ?>
+                <a href="profile.php">
+                    <span>👤</span> Profil
+                </a>
+                <a href="logout.php">
+                    <span>🚪</span> Logout
+                </a>
+            </nav>
         </aside>
+
         <main class="dashboard-main">
-            <h1 class="dashboard-title-alt">Peminjaman Buku</h1>
+            <h1 class="dashboard-title">Peminjaman Buku</h1>
             
             <?php if (isset($success)): ?>
             <div class="alert alert-success">
-                <?php echo $success; ?>
+                <i class="material-icons">check_circle</i>
+                <span><?php echo $success; ?></span>
             </div>
             <?php endif; ?>
             
             <?php if (isset($error)): ?>
             <div class="alert alert-error">
-                <?php echo $error; ?>
+                <i class="material-icons">error</i>
+                <span><?php echo $error; ?></span>
             </div>
             <?php endif; ?>
-            
-            <div class="borrow-container">            <div class="borrow-form">
-                    <h2>Pinjam Buku</h2>
+              <div class="content-grid">
+                <div class="card-glass">
+                    <h2 class="section-title">
+                        <span class="material-icons">book</span>
+                        Pinjam Buku
+                    </h2>
                     <form method="POST" class="edit-form">
                         <div class="input-group">
                             <label for="book_id">Pilih Buku</label>
-                            <select id="book_id" name="book_id" required class="book-select">
-                                <option value="">-- Pilih Buku --</option>
-                                <?php if ($books_result && $books_result->num_rows > 0): ?>
-                                    <?php while ($book = $books_result->fetch_assoc()): ?>
-                                    <option value="<?php echo $book['id']; ?>">
-                                        <?php echo htmlspecialchars($book['judul']); ?> 
-                                        (Stok: <?php echo $book['stok']; ?>)
-                                    </option>
-                                    <?php endwhile; ?>
-                                <?php else: ?>
-                                    <option value="" disabled>Tidak ada buku tersedia</option>
-                                <?php endif; ?>
-                            </select>
+                            <div class="input-field">
+                                <span class="material-icons">library_books</span>
+                                <select id="book_id" name="book_id" required>
+                                    <option value="">-- Pilih Buku --</option>
+                                    <?php if ($books_result->num_rows > 0):
+                                        while ($book = $books_result->fetch_assoc()): ?>
+                                            <option value="<?php echo $book['id']; ?>">
+                                                <?php echo htmlspecialchars($book['judul']); ?>
+                                                (Stok: <?php echo $book['stok']; ?>)
+                                            </option>
+                                        <?php endwhile;
+                                    endif; ?>
+                                </select>
+                            </div>
                         </div>
-                        <button type="submit" class="btn-primary">Pinjam Buku</button>
+                        <button type="submit" class="btn-primary">
+                            <span class="material-icons">add_circle</span>
+                            Pinjam Buku
+                        </button>
                     </form>
                 </div>
-                
-                <div class="borrowed-books">
-                    <h2>Buku yang Sedang Dipinjam</h2>
-                    <table class="books-table">
-                        <thead>
-                            <tr>
-                                <th>Judul Buku</th>
-                                <th>Tanggal Pinjam</th>
-                                <th>Batas Kembali</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php if ($borrows_result->num_rows > 0): ?>
-                            <?php while ($borrow = $borrows_result->fetch_assoc()): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($borrow['judul']); ?></td>
-                                <td><?php echo date('d/m/Y', strtotime($borrow['tanggal_pinjam'])); ?></td>
-                                <td><?php echo date('d/m/Y', strtotime($borrow['tanggal_kembali'])); ?></td>
-                                <td><?php echo ucfirst($borrow['status']); ?></td>
-                            </tr>
-                            <?php endwhile; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="4" style="text-align: center; color: #b2b8c6">
-                                    Belum ada buku yang dipinjam.
-                                </td>
-                            </tr>
-                        <?php endif; ?>
-                        </tbody>
-                    </table>
+                  <div class="card-glass">
+                    <h2 class="section-title">
+                        <span class="material-icons">assignment</span>
+                        Buku yang Sedang Dipinjam
+                    </h2>
+                    <div class="table-responsive">
+                        <table class="books-table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <span class="material-icons">book</span>
+                                        Judul Buku
+                                    </th>
+                                    <th>
+                                        <span class="material-icons">event</span>
+                                        Tanggal Pinjam
+                                    </th>
+                                    <th>
+                                        <span class="material-icons">event_available</span>
+                                        Batas Kembali
+                                    </th>
+                                    <th>
+                                        <span class="material-icons">info</span>
+                                        Status
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php if ($borrows_result->num_rows > 0): 
+                                while ($borrow = $borrows_result->fetch_assoc()): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($borrow['judul']); ?></td>
+                                    <td><?php echo date('d/m/Y', strtotime($borrow['tanggal_pinjam'])); ?></td>
+                                    <td><?php echo date('d/m/Y', strtotime($borrow['tanggal_kembali'])); ?></td>
+                                    <td><span class="status-badge"><?php echo htmlspecialchars($borrow['status']); ?></span></td>
+                                </tr>
+                                <?php endwhile;
+                            else: ?>
+                                <tr>
+                                    <td colspan="4" class="text-center">Belum ada buku yang dipinjam</td>
+                                </tr>
+                            <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
 <?php
