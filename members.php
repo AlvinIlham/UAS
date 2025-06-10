@@ -116,8 +116,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])
                                 <i class="material-icons">person</i>
                                 <input type="text" id="username" name="username" required maxlength="50" placeholder="Masukkan username">
                             </div>
-                        </div>
-                        <div class="input-group">
+                        </div>                        <div class="input-group">
                             <label for="password">Password</label>
                             <div class="input-field">
                                 <i class="material-icons">lock</i>

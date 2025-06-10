@@ -1481,3 +1481,143 @@ body {
     font-size: 0.7rem;
   }
 }
+
+/* Additional form and button improvements */
+.toggle-password {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: var(--border-radius-sm);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.5rem;
+}
+
+.toggle-password:hover {
+  color: var(--primary);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.toggle-password .material-icons {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+/* Enhanced form spacing and layout */
+.auth-form,
+.edit-form {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.auth-form .input-group,
+.edit-form .input-group {
+  margin-bottom: 1.5rem;
+}
+
+.auth-form .input-group:last-of-type,
+.edit-form .input-group:last-of-type {
+  margin-bottom: 2rem;
+}
+
+/* Better button styling */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--bg-elevated);
+  color: var(--text-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--medium-gray);
+  border-color: var(--text-secondary);
+  transform: translateY(-1px);
+}
+
+/* Improve return action buttons */
+.return-action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+}
+
+.return-action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+/* Table responsive improvements */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+}
+
+/* Mobile form improvements */
+@media (max-width: 768px) {
+  .auth-form,
+  .edit-form {
+    max-width: 100%;
+    padding: 0 0.5rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .form-actions .btn-primary,
+  .form-actions .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Additional background class fixes */
+.dashboard-bg-alt {
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+}
+
+/* Card improvements for forms */
+.card-glass .auth-header {
+  margin-bottom: 2rem;
+}
+
+.card-glass .auth-form {
+  margin-top: 0;
+}
+
+/* Status badge improvements */
+.status-badge.dipinjam {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.status-badge.dikembalikan {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}

@@ -160,11 +160,10 @@ $borrows_result = $stmt->get_result();
                                     <span class="status-badge <?php echo strtolower($borrow['status']); ?>">
                                         <?php echo htmlspecialchars($borrow['status']); ?>
                                     </span>
-                                </td>
-                                <td>
+                                </td>                                <td>
                                     <form method="POST" style="display: inline;">
                                         <input type="hidden" name="borrow_id" value="<?php echo $borrow['id']; ?>">
-                                        <button type="submit" class="btn-secondary">
+                                        <button type="submit" class="return-action-button">
                                             <i class="material-icons">assignment_return</i>
                                             <span>Kembalikan</span>
                                         </button>

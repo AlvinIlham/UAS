@@ -90,11 +90,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button class="mobile-menu-toggle">
                 <span class="material-icons">menu</span>
             </button>
-        </nav>
-
-        <main class="dashboard-main">
+        </nav>        <main class="dashboard-main">
             <h1 class="dashboard-title">Tambah Buku Baru</h1>
-            </div>
             
             <?php if (isset($error)): ?>
             <div class="alert alert-error">

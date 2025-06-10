@@ -166,25 +166,44 @@ document.addEventListener("DOMContentLoaded", function () {
       this.style.backgroundColor = "";
     });
   });
-
   // Password visibility toggle
   const toggleButtons = document.querySelectorAll(".toggle-password");
 
   toggleButtons.forEach((button) => {
-    button.addEventListener("click", function () {
-      const input = this.previousElementSibling;
+    button.addEventListener("click", function (e) {
+      e.preventDefault();
 
-      // Toggle password visibility
-      if (input.type === "password") {
-        input.type = "text";
-        this.textContent = "visibility";
-      } else {
-        input.type = "password";
-        this.textContent = "visibility_off";
+      // Find the input field - can be previous sibling or within input-field
+      let input = this.previousElementSibling;
+      if (!input || input.tagName !== "INPUT") {
+        input = this.parentElement.querySelector(
+          'input[type="password"], input[type="text"]'
+        );
       }
 
-      // Add focus effect
-      input.focus();
+      if (input) {
+        // Toggle password visibility
+        if (input.type === "password") {
+          input.type = "text";
+          const icon = this.querySelector(".material-icons") || this;
+          if (icon.textContent) {
+            icon.textContent = "visibility";
+          } else {
+            this.textContent = "visibility";
+          }
+        } else {
+          input.type = "password";
+          const icon = this.querySelector(".material-icons") || this;
+          if (icon.textContent) {
+            icon.textContent = "visibility_off";
+          } else {
+            this.textContent = "visibility_off";
+          }
+        }
+
+        // Add focus effect
+        input.focus();
+      }
     });
   });
 
