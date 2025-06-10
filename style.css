@@ -1082,7 +1082,7 @@ body {
 }
 
 .quick-info h3 {
-  color: var(--text-primary);
+  color: var(--text-white);
   font-size: 1rem;
   margin-bottom: 0.25rem;
 }
