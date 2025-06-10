@@ -30,19 +30,22 @@ $conn->close();
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body class="dashboard-bg">
-    <div class="dashboard-grid">
-        <!-- Sidebar -->
-        <aside class="dashboard-side">
-            <div class="sidebar-header">
+<body class="dashboard-bg">    <div class="dashboard-grid">
+        <!-- Navbar -->
+        <nav class="dashboard-navbar">
+            <div class="navbar-brand">
                 <div class="avatar">
                     <?php echo strtoupper(substr($username, 0, 1)); ?>
                 </div>
-                <h3 class="admin-text"><?php echo $username; ?></h3>
-                <p class="role-text"><?php echo ucfirst($role); ?></p>
+                <div class="navbar-user">
+                    <div class="user-info">
+                        <h3 class="admin-text"><?php echo $username; ?></h3>
+                        <p class="role-text"><?php echo ucfirst($role); ?></p>
+                    </div>
+                </div>
             </div>
 
-            <nav class="dashboard-menu">
+            <div class="dashboard-menu">
                 <a href="dashboard.php" class="active">
                     <span class="material-icons">dashboard</span>
                     Dashboard
@@ -73,19 +76,16 @@ $conn->close();
                     <span class="material-icons">logout</span>
                     Logout
                 </a>
-            </nav>
-        </aside>
+            </div>
 
-        <!-- Main Content -->
+            <button class="mobile-menu-toggle">
+                <span class="material-icons">menu</span>
+            </button>
+        </nav>        <!-- Main Content -->
         <main class="dashboard-main">
-            <div class="content-header">
-                <button class="mobile-nav-toggle">
-                    <span class="material-icons">menu</span>
-                </button>
-                <div class="header-content">
-                    <h1 class="dashboard-title">Dashboard</h1>
-                    <p class="dashboard-subtitle">Selamat datang kembali, <?php echo $username; ?>!</p>
-                </div>
+            <div class="header-content">
+                <h1 class="dashboard-title">Dashboard</h1>
+                <p class="dashboard-subtitle">Selamat datang kembali, <?php echo $username; ?>!</p>
             </div>
 
             <!-- Statistics Cards -->

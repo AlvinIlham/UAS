@@ -4,7 +4,7 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
 }
-$role = $_SESSION['role'];
+$role = isset($_SESSION['role']) ? $_SESSION['role'] : 'user';
 
 // Handle delete action
 if ($role === 'admin' && isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
@@ -50,76 +50,60 @@ $offset = ($current_page - 1) * $books_per_page;
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body class="dashboard-bg">
-    <div class="dashboard-grid">
-        <!-- Sidebar -->
-        <aside class="dashboard-side">
-            <div class="sidebar-header">
+<body class="dashboard-bg">    <div class="dashboard-grid">
+        <!-- Navbar -->
+        <nav class="dashboard-navbar">
+            <div class="navbar-brand">
                 <div class="avatar">
                     <?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?>
                 </div>
-                <h3 class="admin-text"><?php echo $_SESSION['username']; ?></h3>
-                <p class="role-text"><?php echo ucfirst($role); ?></p>
+                <div class="navbar-user">
+                    <div class="user-info">
+                        <h3 class="admin-text"><?php echo $_SESSION['username']; ?></h3>
+                        <p class="role-text"><?php echo ucfirst($role); ?></p>
+                    </div>
+                </div>
             </div>
 
-            <nav class="dashboard-menu">
-                <ul>
-                    <li>
-                        <a href="dashboard.php">
-                            <span class="material-icons">dashboard</span>
-                            Dashboard
-                        </a>
-                    </li>
-                    <li class="active">
-                        <a href="books.php">
-                            <span class="material-icons">library_books</span>
-                            Data Buku
-                        </a>
-                    </li>
-                    <li>
-                        <a href="borrow.php">
-                            <span class="material-icons">book</span>
-                            Peminjaman
-                        </a>
-                    </li>
-                    <li>
-                        <a href="return.php">
-                            <span class="material-icons">assignment_return</span>
-                            Pengembalian
-                        </a>
-                    </li>
-                    <?php if ($role === 'admin'): ?>
-                    <li>
-                        <a href="members.php">
-                            <span class="material-icons">people</span>
-                            Data Anggota
-                        </a>
-                    </li>
-                    <?php endif; ?>
-                    <li>
-                        <a href="profile.php">
-                            <span class="material-icons">person</span>
-                            Profil
-                        </a>
-                    </li>
-                    <li>
-                        <a href="logout.php">
-                            <span class="material-icons">logout</span>
-                            Logout
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
+            <div class="dashboard-menu">
+                <a href="dashboard.php">
+                    <span class="material-icons">dashboard</span>
+                    Dashboard
+                </a>
+                <a href="books.php" class="active">
+                    <span class="material-icons">library_books</span>
+                    Data Buku
+                </a>
+                <a href="borrow.php">
+                    <span class="material-icons">book</span>
+                    Peminjaman
+                </a>
+                <a href="return.php">
+                    <span class="material-icons">assignment_return</span>
+                    Pengembalian
+                </a>
+                <?php if ($role === 'admin'): ?>
+                <a href="members.php">
+                    <span class="material-icons">people</span>
+                    Data Anggota
+                </a>
+                <?php endif; ?>
+                <a href="profile.php">
+                    <span class="material-icons">person</span>
+                    Profil
+                </a>
+                <a href="logout.php">
+                    <span class="material-icons">logout</span>
+                    Logout
+                </a>
+            </div>
 
-        <!-- Main Content -->
+            <button class="mobile-menu-toggle">
+                <span class="material-icons">menu</span>
+            </button>
+        </nav>        <!-- Main Content -->
         <main class="dashboard-main">
-            <div class="content-header">
-                <button class="mobile-nav-toggle">
-                    <span class="material-icons">menu</span>
-                </button>
-                <h1 class="dashboard-title">Data Buku</h1>
-            </div>
+            <h1 class="dashboard-title">Data Buku</h1>
 
             <?php if (isset($_GET['status']) && isset($_GET['message'])): ?>
                 <div class="alert alert-<?php echo $_GET['status'] === 'success' ? 'success' : 'error'; ?>">

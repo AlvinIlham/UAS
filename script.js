@@ -25,31 +25,70 @@ window.onclick = function (event) {
 // Mobile Navigation
 document.addEventListener("DOMContentLoaded", function () {
   // Mobile nav toggle
-  const mobileNavToggle = document.querySelector(".mobile-nav-toggle");
-  const sidebar = document.querySelector(".dashboard-side");
-
-  if (mobileNavToggle && sidebar) {
-    mobileNavToggle.addEventListener("click", function () {
-      sidebar.classList.toggle("active");
+  const mobileMenuToggle = document.querySelector(".mobile-menu-toggle");
+  const navbarMenu = document.querySelector(".dashboard-menu");
+  if (mobileMenuToggle && navbarMenu) {
+    mobileMenuToggle.addEventListener("click", function () {
+      navbarMenu.classList.toggle("active");
       this.classList.toggle("active");
+
+      // Change icon based on state
+      const icon = this.querySelector(".material-icons");
+      if (navbarMenu.classList.contains("active")) {
+        icon.textContent = "close";
+      } else {
+        icon.textContent = "menu";
+      }
     });
   }
-
-  // Close sidebar when clicking outside
+  // Close mobile menu when clicking outside
   document.addEventListener("click", function (e) {
-    if (sidebar && sidebar.classList.contains("active")) {
-      if (!sidebar.contains(e.target) && !mobileNavToggle.contains(e.target)) {
-        sidebar.classList.remove("active");
-        mobileNavToggle.classList.remove("active");
+    if (navbarMenu && navbarMenu.classList.contains("active")) {
+      if (
+        !navbarMenu.contains(e.target) &&
+        !mobileMenuToggle.contains(e.target)
+      ) {
+        navbarMenu.classList.remove("active");
+        mobileMenuToggle.classList.remove("active");
+
+        // Reset icon
+        const icon = mobileMenuToggle.querySelector(".material-icons");
+        if (icon) {
+          icon.textContent = "menu";
+        }
       }
     }
   });
-
-  // Optional: Close sidebar when pressing Escape
+  // Close mobile menu when pressing Escape
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && sidebar && sidebar.classList.contains("active")) {
-      sidebar.classList.remove("active");
-      mobileNavToggle.classList.remove("active");
+    if (
+      e.key === "Escape" &&
+      navbarMenu &&
+      navbarMenu.classList.contains("active")
+    ) {
+      navbarMenu.classList.remove("active");
+      mobileMenuToggle.classList.remove("active");
+
+      // Reset icon
+      const icon = mobileMenuToggle.querySelector(".material-icons");
+      if (icon) {
+        icon.textContent = "menu";
+      }
+    }
+  });
+  // Close mobile menu when window is resized to desktop
+  window.addEventListener("resize", function () {
+    if (window.innerWidth > 768 && navbarMenu) {
+      navbarMenu.classList.remove("active");
+      if (mobileMenuToggle) {
+        mobileMenuToggle.classList.remove("active");
+
+        // Reset icon
+        const icon = mobileMenuToggle.querySelector(".material-icons");
+        if (icon) {
+          icon.textContent = "menu";
+        }
+      }
     }
   });
 

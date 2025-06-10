@@ -5,7 +5,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 $user_id = $_SESSION['user_id'];
-$role = $_SESSION['role'];
+$role = isset($_SESSION['role']) ? $_SESSION['role'] : 'user';
 
 require 'db.php';
 
@@ -73,40 +73,57 @@ $borrows_result = $stmt->get_result();
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body class="dashboard-bg-alt">    <div class="dashboard-grid">
-        <aside class="dashboard-side">
-            <div class="avatar">
-                <span><?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?></span>
+<body class="dashboard-bg-alt">
+    <div class="dashboard-grid">
+        <!-- Navbar -->
+        <nav class="dashboard-navbar">
+            <div class="navbar-brand">
+                <div class="avatar">
+                    <?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?>
+                </div>
+                <div class="navbar-user">
+                    <div class="user-info">                        <h3 class="admin-text"><?php echo htmlspecialchars($_SESSION['username']); ?></h3>
+                        <p class="role-text"><?php echo ucfirst($role); ?></p>
+                    </div>
+                </div>
             </div>
-            <p class="admin-text"><?php echo htmlspecialchars($_SESSION['username']); ?></p>
-            <p class="role-text"><?php echo ucfirst($_SESSION['role']); ?></p>
-            
-            <nav class="dashboard-menu">
+
+            <div class="dashboard-menu">
                 <a href="dashboard.php">
-                    <span>⬜</span> Dashboard
+                    <span class="material-icons">dashboard</span>
+                    Dashboard
                 </a>
                 <a href="books.php">
-                    <span>📚</span> Data Buku
+                    <span class="material-icons">library_books</span>
+                    Data Buku
                 </a>
                 <a href="borrow.php" class="active">
-                    <span>📥</span> Peminjaman
+                    <span class="material-icons">book</span>
+                    Peminjaman
                 </a>
                 <a href="return.php">
-                    <span>📤</span> Pengembalian
-                </a>
-                <?php if ($_SESSION['role'] === 'admin'): ?>
+                    <span class="material-icons">assignment_return</span>
+                    Pengembalian                </a>
+                <?php if ($role === 'admin'): ?>
                 <a href="members.php">
-                    <span>👥</span> Data Anggota
+                    <span class="material-icons">people</span>
+                    Data Anggota
                 </a>
                 <?php endif; ?>
                 <a href="profile.php">
-                    <span>👤</span> Profil
+                    <span class="material-icons">person</span>
+                    Profil
                 </a>
                 <a href="logout.php">
-                    <span>🚪</span> Logout
+                    <span class="material-icons">logout</span>
+                    Logout
                 </a>
-            </nav>
-        </aside>
+            </div>
+
+            <button class="mobile-menu-toggle">
+                <span class="material-icons">menu</span>
+            </button>
+        </nav>
 
         <main class="dashboard-main">
             <h1 class="dashboard-title">Peminjaman Buku</h1>

@@ -1,7 +1,7 @@
 <?php
 $host = 'localhost';
 $user = 'root';
-$pass = '123';
+$pass = '';
 $db   = 'db_perpustakaan';
 
 $conn = new mysqli($host, $user, $pass, $db);

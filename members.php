@@ -1,6 +1,7 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+$role = isset($_SESSION['role']) ? $_SESSION['role'] : 'user';
+if (!isset($_SESSION['user_id']) || $role !== 'admin') {
     header("Location: login.php");
     exit;
 }
@@ -35,44 +36,55 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body class="dashboard-bg-alt">
-    <div class="dashboard-grid">
-        <aside class="dashboard-side">
-            <div class="avatar">
-                <span><?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?></span>
+<body class="dashboard-bg-alt">    <div class="dashboard-grid">
+        <!-- Navbar -->
+        <nav class="dashboard-navbar">
+            <div class="navbar-brand">
+                <div class="avatar">
+                    <?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?>
+                </div>
+                <div class="navbar-user">
+                    <div class="user-info">                        <h3 class="admin-text"><?php echo htmlspecialchars($_SESSION['username']); ?></h3>
+                        <p class="role-text"><?php echo ucfirst($role); ?></p>
+                    </div>
+                </div>
             </div>
-            <p class="admin-text"><?php echo htmlspecialchars($_SESSION['username']); ?></p>
-            <p class="role-text"><?php echo ucfirst($_SESSION['role']); ?></p>
-              <nav class="dashboard-menu">
+
+            <div class="dashboard-menu">
                 <a href="dashboard.php">
                     <span class="material-icons">dashboard</span>
-                    <span>Dashboard</span>
+                    Dashboard
                 </a>
                 <a href="books.php">
                     <span class="material-icons">library_books</span>
-                    <span>Data Buku</span>
+                    Data Buku
                 </a>
                 <a href="borrow.php">
-                    <span class="material-icons">call_received</span>
-                    <span>Peminjaman</span>
+                    <span class="material-icons">book</span>
+                    Peminjaman
                 </a>
                 <a href="return.php">
-                    <span class="material-icons">call_made</span>
-                    <span>Pengembalian</span>
-                </a>                <a href="members.php" class="active">
-                    <span class="material-icons">group</span>
-                    <span>Data Anggota</span>
+                    <span class="material-icons">assignment_return</span>
+                    Pengembalian
+                </a>
+                <a href="members.php" class="active">
+                    <span class="material-icons">people</span>
+                    Data Anggota
                 </a>
                 <a href="profile.php">
                     <span class="material-icons">person</span>
-                    <span>Profil</span>
+                    Profil
                 </a>
                 <a href="logout.php">
                     <span class="material-icons">logout</span>
-                    <span>Logout</span>
+                    Logout
                 </a>
-            </nav>
-        </aside>
+            </div>
+
+            <button class="mobile-menu-toggle">
+                <span class="material-icons">menu</span>
+            </button>
+        </nav>
 
         <main class="dashboard-main">
             <h1 class="dashboard-title">Data Anggota</h1>
