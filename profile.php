@@ -157,10 +157,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
                 <span>❌</span>
                 <?php echo htmlspecialchars($_GET['error']); ?>
             </div>
-            <?php endif; ?>
-
-            <div class="content-grid">
-                <div class="card-glass">
+            <?php endif; ?>            <div class="profile-container">
+                <div class="card-glass profile-card">
                     <div class="profile-header">
                         <div class="profile-avatar">
                             <span><?php echo strtoupper(substr($user['username'], 0, 1)); ?></span>

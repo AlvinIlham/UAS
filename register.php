@@ -54,8 +54,9 @@ if (isset($_SESSION['user_id'])) {
                 <i class="material-icons">person_add</i>
                 <span>Daftar</span>
             </button>
-            <p class="auth-link">Sudah punya akun? <a href="login.php">Login</a></p>
-        </form>
+            <p class="auth-link">Sudah punya akun? <a href="login.php">Login</a></p>        </form>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

@@ -45,9 +45,9 @@ if (isset($_SESSION['user_id'])) {
             <button type="submit" class="btn-primary">
                 <i class="material-icons">login</i>
                 <span>Login</span>
-            </button>
-            <p class="auth-link">Belum punya akun? <a href="register.php">Daftar</a></p>
-        </form>
+            </button>            <p class="auth-link">Belum punya akun? <a href="register.php">Daftar</a></p>        </form>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
